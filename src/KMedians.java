@@ -44,7 +44,7 @@ public class KMedians { //implements kmedians++ algorithm
     }
 
     public void solve() throws IOException {
-//        System.out.println("Starting to solve...");
+        long beginning = System.currentTimeMillis();
         int randomRestartCounter = 0;
         while (randomRestartCounter < MAX_COUNT) {
             this.index = 0;
@@ -54,6 +54,8 @@ public class KMedians { //implements kmedians++ algorithm
             }
             randomRestartCounter++;
         }
+        long end = System.currentTimeMillis();
+        System.out.println("Computation time: " + (end - beginning) + "ms");
     }
 
     public void showSolution(Set<List<Integer>> testData, int testCount) {
@@ -65,7 +67,7 @@ public class KMedians { //implements kmedians++ algorithm
 //            }
 //            System.out.println("***");
 //        }
-        System.out.println(calculator.calculateAccuracy(testData, this.bestSolution, testCount));
+        System.out.println( "Accuracy in %: " + calculator.calculateAccuracy(testData, this.bestSolution, testCount));
     }
 
     private Map<Vector, Set<Vector>> findSolution() {

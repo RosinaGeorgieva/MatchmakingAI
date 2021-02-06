@@ -22,6 +22,7 @@ public class DataProcessor {
     private static final String HEADER = "iid";
     private static final String HEADER_NAMES = "Name";
     private static final String COMMA = ",";
+    private static final int NUMBER_OF_OBS = 336;
 
     public List<String> chooseNames(Path filePath) throws IOException {
         Stream<String> lines = Files.lines(filePath);
@@ -32,7 +33,7 @@ public class DataProcessor {
                 .map(line -> line.split(COMMA)[1])
                 .forEachOrdered(line -> names.add(line));
 
-        return new ArrayList<>(names);
+        return new ArrayList<>(names).subList(0, NUMBER_OF_OBS);
     }
 
     public Set<List<Integer>> chooseTestData(Path filePath) throws IOException {
