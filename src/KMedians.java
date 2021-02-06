@@ -67,7 +67,7 @@ public class KMedians { //implements kmedians++ algorithm
 //            }
 //            System.out.println("***");
 //        }
-        System.out.println( "Accuracy in %: " + calculator.calculateAccuracy(testData, this.bestSolution, testCount));
+        System.out.println( "Accuracy: " + calculator.calculateAccuracy(testData, this.bestSolution, testCount) + "%");
     }
 
     private Map<Vector, Set<Vector>> findSolution() {

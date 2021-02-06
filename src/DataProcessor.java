@@ -24,6 +24,15 @@ public class DataProcessor {
     private static final String COMMA = ",";
     private static final int NUMBER_OF_OBS = 336;
 
+    public List<String> answersCodebook(Path filePath) throws IOException {
+        Stream<String> lines = Files.lines(filePath);
+
+        List<String> codebook = new ArrayList<>();
+        lines.forEach(line -> codebook.add(line));
+
+        return codebook;
+    }
+
     public List<String> chooseNames(Path filePath) throws IOException {
         Stream<String> lines = Files.lines(filePath);
 

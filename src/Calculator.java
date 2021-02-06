@@ -1,3 +1,5 @@
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +14,7 @@ public class Calculator {
         int correctCount = 0;
         int correctT = 0;
         int correctF = 0;
-        while(i < iterCount) {
+        while (i < iterCount) {
             int randomIndex = ThreadLocalRandom.current().nextInt(0, testList.size());
             List<Integer> obs = testList.get(randomIndex);
             int id = obs.get(0);
@@ -21,29 +23,30 @@ public class Calculator {
 
             Vector keyOfId = null;
             Vector keyOfPid = null;
-            for(Vector key : solution.keySet()) {
+            for (Vector key : solution.keySet()) {
                 Set<Vector> values = solution.get(key);
-                for(Vector v : values) {
-                    if(v.id == id) {
+                for (Vector v : values) {
+                    if (v.id == id) {
                         keyOfId = key;
                     }
-                    if(v.id == pid) {
+                    if (v.id == pid) {
                         keyOfPid = key;
                     }
                 }
             }
-
+//note: DA SLOJA DA PRINTI VMESTO DA VRYSHTA!!! I DA PRINTI I ZA T, I ZA F, I ZA TOTAL
 //            if(match == 0) {
 //                correctF++;
 //            }
 
-            if((keyOfId.equals(keyOfPid) && match == 1) || (!keyOfId.equals(keyOfPid) && match == 0)) {
+            if ((keyOfId.equals(keyOfPid) && match == 1) || (!keyOfId.equals(keyOfPid) && match == 0)) {
                 correctCount++;
             }
 
             i++;
         }
-        return (double) correctCount / iterCount;
+
+        return BigDecimal.valueOf(100 * ((double) correctCount / iterCount)).setScale(2, RoundingMode.HALF_UP).doubleValue();
     }
 
     public double calculateManhattanDistance(Vector firstVector, Vector secondVector) {

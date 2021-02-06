@@ -18,9 +18,12 @@ import java.util.stream.Collectors;
 public class MatchmakerAI implements Runnable {
     private static final String MAIN_DATA = "D:\\Desktop\\datasets\\data.csv";
     private static final String NAMES = "D:\\Desktop\\datasets\\names.csv";
+    private static final String CODEBOOK = "D:\\Desktop\\datasets\\codebook.txt";
 
     private static Map<Vector, Set<Vector>> solution = new HashMap<>();
     private static final Map<Integer, String> nameById = new HashMap<>();
+
+    private static List<String> codebook = new ArrayList<>();
     private static boolean isReady = false;
 
     @Override
@@ -41,6 +44,7 @@ public class MatchmakerAI implements Runnable {
             observationVectors = dp.chooseObservations(Path.of(MAIN_DATA));
             testData = dp.chooseTestData(Path.of(MAIN_DATA));
             names = dp.chooseNames(Path.of(NAMES));
+            codebook = dp.answersCodebook(Path.of(CODEBOOK));
         } catch (IOException exception) {
             exception.printStackTrace();
         }
@@ -107,23 +111,36 @@ public class MatchmakerAI implements Runnable {
     }
 
     public static String getMatchFor(String user) throws IOException {
-        int suggestedUserId = -1;
+        int saughtUserId = -1;
         for(Integer id : nameById.keySet()) {
             if(nameById.get(id).equals(user)) {
-                suggestedUserId = id;
+                saughtUserId = id;
+            }
+        }
+
+        Vector firstUserData = null;
+        for (Vector centroid : solution.keySet()) {
+            Set<Vector> vectorsInCluster = solution.get(centroid);
+            for (Vector v : vectorsInCluster) {
+                if (v.id == saughtUserId) {
+                    firstUserData = v;
+                    break;
+                }
             }
         }
 
         String suggestedUser = null;
+        Vector secondUserData = null;
         for (Vector centroid : solution.keySet()) {
             Set<Vector> vectorsInCluster = solution.get(centroid);
             for (Vector vectorInCluster : vectorsInCluster) {
-                if (vectorInCluster.id == suggestedUserId) {
-                    List<Integer> otherUsersNames = vectorsInCluster.stream().map(vector -> vector.id).collect(Collectors.toList());
+                if (vectorInCluster.id == saughtUserId) {
+                    List<Vector> vectorList = vectorsInCluster.stream().collect(Collectors.toList());
                     int randomUser;
                     do {
-                       randomUser = ThreadLocalRandom.current().nextInt(0, otherUsersNames.size() - 1);
+                       randomUser = ThreadLocalRandom.current().nextInt(0, vectorList.size() - 1);
                     } while (randomUser == vectorInCluster.id);
+                    secondUserData = vectorList.get(randomUser);
                     suggestedUser = nameById.get(randomUser);
                     break;
                 }
@@ -134,56 +151,34 @@ public class MatchmakerAI implements Runnable {
             return "No matches found!";
         }
 
-//        saveMatchToFile(user, suggestedUser, solution);
+        saveMatchToFile(user, suggestedUser, firstUserData, secondUserData);
 
         return suggestedUser;
     }
 
-//    private static void saveMatchToFile(String firstUser, String secondUser, Map<Vector, Set<Vector>> solution) throws IOException {
-//        String outputMessage = "Description of " + firstUser +  "'s personality: \n";
-//        outputMessage += allAnswersDecription(userData.getIntCoordinates());
-//        outputMessage += "\n";
-//
-//        List<String> otherUsersNames = otherUsersInThisCluster.keySet().stream().collect(Collectors.toList());
-//        int randomUser = ThreadLocalRandom.current().nextInt(0, otherUsersInThisCluster.size() - 1);
-//        String suggestedUser = otherUsersNames.get(randomUser);
-//
-//        outputMessage += "\n";
-//        outputMessage += "Description of " + suggestedUser + "'s personality: \n";
-//        outputMessage += allAnswersDecription(otherUsersInThisCluster.get(suggestedUser).getIntCoordinates());
-//
-//        Path compatibilityFile = Path.of("output\\"+ firstUser + "-" + suggestedUser + ".txt");
-//        Files.createFile(compatibilityFile);
-//
-//        try (var printWriter = new PrintStream(new FileOutputStream(compatibilityFile.toString(), false))) {
-//            printWriter.println(outputMessage);
-//        }
-//    }
+    private static void saveMatchToFile(String firstUser, String secondUser, Vector firstUserData, Vector secondUserData) throws IOException {
+        String outputMessage = "Interest of " + firstUser + " in the following activities, on a scale [1-10]: \n";
+        outputMessage += allAnswersDecription(firstUserData.getIntCoordinates());
+        outputMessage += "\n";
 
-//    private static String allAnswersDecription(List<Integer> answers) {
-//        String description = "";
-//        for (int i = 0; i < answers.size(); i++) {
-//            description += codebook.get(i);
-//            description += "->";
-//            switch (answers.get(i)) {
-//                case 1:
-//                    description += "inaccurate";
-//                    break;
-//                case 2:
-//                    description += "inaccurate to neutral";
-//                    break;
-//                case 3:
-//                    description += "neutral";
-//                    break;
-//                case 4:
-//                    description += "neutral to accurate";
-//                    break;
-//                case 5:
-//                    description += "accurate";
-//                    break;
-//            }
-//            description += '\n';
-//        }
-//        return description;
-//    }
+        outputMessage += "Interest of " + secondUser + " in the following activities, on a scale [1-10]: \n";
+        outputMessage += allAnswersDecription(secondUserData.getIntCoordinates());
+
+        Path compatibilityFile = Path.of("output\\"+ firstUser + "-" + secondUser + ".txt");
+        Files.createFile(compatibilityFile);
+
+        try (var printWriter = new PrintStream(new FileOutputStream(compatibilityFile.toString(), false))) {
+            printWriter.println(outputMessage);
+        }
+    }
+
+    private static String allAnswersDecription(List<Integer> answers) {
+        String description = "";
+        for (int i = 0; i < answers.size(); i++) {
+            description += codebook.get(i);
+            description += answers.get(i);
+            description += '\n';
+        }
+        return description;
+    }
 }
