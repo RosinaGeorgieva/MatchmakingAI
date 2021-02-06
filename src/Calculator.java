@@ -10,6 +10,8 @@ public class Calculator {
         List<List<Integer>> testList = new ArrayList<>(test);
 
         int correctCount = 0;
+        int correctT = 0;
+        int correctF = 0;
         while(i < iterCount) {
             int randomIndex = ThreadLocalRandom.current().nextInt(0, testList.size());
             List<Integer> obs = testList.get(randomIndex);
@@ -30,6 +32,10 @@ public class Calculator {
                     }
                 }
             }
+
+//            if(match == 0) {
+//                correctF++;
+//            }
 
             if((keyOfId.equals(keyOfPid) && match == 1) || (!keyOfId.equals(keyOfPid) && match == 0)) {
                 correctCount++;

@@ -1,3 +1,4 @@
+import javax.swing.*;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -12,7 +13,7 @@ public class App {
 
     private static Map<Vector, Set<Vector>> solution = new HashMap<>();
 
-    public static void main(String... args) {
+    public static void main(String... args) throws IOException {
         DataProcessor dp = new DataProcessor();
 //        try {
 //            dp.processData(Path.of(MAIN_DATA));
@@ -29,7 +30,39 @@ public class App {
             exception.printStackTrace();
         }
 
-        int K = 10; //variates
+//        //Elbow method: ambiguous
+//        List<Double> wss = new ArrayList<>();
+//        for(int K = 1; K <= 15; K++) {
+//           KMedians problem = new KMedians(K, observationVectors);
+//            problem.solve();
+//            Double currentWss = problem.withinPointScatter(problem.getSolution());
+//            wss.add(currentWss);
+//        }
+//        LinePlot plot = new LinePlot(wss, "WSS by number of clusters K \n (Elbow method)", "Total WSS");
+//        plot.setSize(800, 400);
+//        plot.setLocationRelativeTo(null);
+//        plot.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+//        plot.setVisible(true);
+
+        //Silhouette method -> k = 10
+//        List<Double> silhoetteCoefficient = new ArrayList<>();
+//        Calculator calculator = new Calculator();
+//        for(int K = 1; K <= 15; K++) {
+//            KMedians problem = new KMedians(K, observationVectors);
+//            problem.solve();
+//            Double currentWss = calculator.calculateAverageSilhouetteCoefficient(problem.getSolution());
+//            silhoetteCoefficient.add(currentWss);
+//        }
+//        LinePlot plot = new LinePlot(silhoetteCoefficient,
+//                "Average silhouette coefficient by number of clusters K \n (Silhouette method)"
+//                , "Silhouette coefficient");
+//        plot.setSize(800, 400);
+//        plot.setLocationRelativeTo(null);
+//        plot.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+//        plot.setVisible(true);
+
+
+        int K = 8;
         KMedians problem = new KMedians(K, observationVectors);
         try {
             problem.solve();
@@ -37,10 +70,6 @@ public class App {
             exception.printStackTrace();
         }
 
-//        solution = problem.getSolution();
-//        System.out.println(solution);
         problem.showSolution(testData, 2500);
-
-
     }
 }
