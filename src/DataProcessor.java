@@ -20,7 +20,20 @@ public class DataProcessor {
     private static final String EMPTY_SPACE = ",,";
     private static final String EMPTY_ANSWER = "NA";
     private static final String HEADER = "iid";
+    private static final String HEADER_NAMES = "Name";
     private static final String COMMA = ",";
+
+    public List<String> chooseNames(Path filePath) throws IOException {
+        Stream<String> lines = Files.lines(filePath);
+
+        Set<String> names = new HashSet<>();
+
+        lines.filter(line -> !line.contains(HEADER_NAMES))
+                .map(line -> line.split(COMMA)[1])
+                .forEachOrdered(line -> names.add(line));
+
+        return new ArrayList<>(names);
+    }
 
     public Set<List<Integer>> chooseTestData(Path filePath) throws IOException {
         var reader = new BufferedReader(new FileReader(filePath.toString()));
@@ -61,15 +74,6 @@ public class DataProcessor {
         reader.close();
 
         return observations;
-    }
-
-    private boolean containsSuch(List<Vector> list, Vector vector) {
-        for(Vector v : list) {
-            if(v.id == vector.id) {
-                return true;
-            }
-        }
-        return false;
     }
 
     public void processData(Path filePath) throws IOException {
@@ -116,5 +120,14 @@ public class DataProcessor {
 
     private static String removeQuotes(String string) {
         return string.replaceAll("\"[a-zA-Z0-9,. /()]+\"", "NA");
+    }
+
+    private boolean containsSuch(List<Vector> list, Vector vector) {
+        for(Vector v : list) {
+            if(v.id == vector.id) {
+                return true;
+            }
+        }
+        return false;
     }
 }

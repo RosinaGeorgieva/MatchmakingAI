@@ -57,14 +57,14 @@ public class KMedians { //implements kmedians++ algorithm
     }
 
     public void showSolution(Set<List<Integer>> testData, int testCount) {
-        for (Vector key : bestSolution.keySet()) {
-            System.out.print("***");
-            Set<Vector> value = bestSolution.get(key);
-            for(Vector v : value) {
-                System.out.print(v.id+",");
-            }
-            System.out.println("***");
-        }
+//        for (Vector key : bestSolution.keySet()) {
+//            System.out.print("***");
+//            Set<Vector> value = bestSolution.get(key);
+//            for(Vector v : value) {
+//                System.out.print(v.id+",");
+//            }
+//            System.out.println("***");
+//        }
         System.out.println(calculator.calculateAccuracy(testData, this.bestSolution, testCount));
     }
 
